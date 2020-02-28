@@ -1,23 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useState, useEffect} from 'react';
 import './App.css';
+import { useFetch } from './hooks/useFetch';
 
 function App() {
+
+
+  // useEffect can also be used to hold state in local storage 
+  // useEffect initialiser function is used to stop json stringify and 
+  // localstorage functions to not fire on each render
+
+  const [count, setCount] = useState(() => JSON.parse(localStorage.getItem('count')));
+  const {data, loading} = useFetch(`http://numbersapi.com/${count}`); 
+  
+  useEffect(()=>{
+    localStorage.setItem('count', JSON.stringify(count));
+  }, [count]);
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+        <h2>{loading ? 'loading ....' : data }</h2>
+        <button
+          onClick={()=>{setCount(count +1)}}
         >
-          Learn React
-        </a>
+          New Fact
+        </button>
       </header>
     </div>
   );
